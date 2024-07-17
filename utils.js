@@ -1,5 +1,4 @@
 const schedule = require("node-schedule");
-const chrono = require("chrono-node");
 const AlertsModel = require("./models/alertsModel");
 
 const myMenu = (bot, chatId) => {
