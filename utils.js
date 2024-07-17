@@ -92,7 +92,7 @@ const setAReminder = async (bot, chatId) => {
         `Reminder set for ${reminderDate.toLocaleString()}: ${reminderText}`
       );
       schedule.scheduleJob(reminderDate, async () => {
-        bot.sendMessage(chatId, `Reminder: ${reminderText}`);
+        sendVoiceReminder(bot, chatId, reminderText);
         await AlertsModel.deleteOne({ _id: newAlert._id });
       });
     }
@@ -184,6 +184,17 @@ const deleteExpiredAlerts = async () => {
     console.log(`Deleted ${result.deletedCount} expired alerts.`);
   } catch (error) {
     console.error("Error deleting expired alerts:", error);
+  }
+};
+
+const sendVoiceReminder = async (bot, chatId, reminderText) => {
+  try {
+    audioFilePath = "assets\\audio\\notificationTune.wav";
+    await bot.sendMessage(chatId, `🔔 **Reminder** 🔔\n\n${reminderText}`);
+
+    // await bot.sendVoice(chatId, audioFilePath);
+  } catch (error) {
+    console.error("Error sending voice reminder:", error);
   }
 };
 
