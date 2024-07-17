@@ -91,6 +91,10 @@ const setAReminder = async (bot, chatId) => {
         chatId,
         `Reminder set for ${reminderDate.toLocaleString()}: ${reminderText}`
       );
+      schedule.scheduleJob(reminderDate, async () => {
+        bot.sendMessage(chatId, `Reminder: ${reminderText}`);
+        await AlertsModel.deleteOne({ _id: newAlert._id });
+      });
     }
   } catch (error) {
     bot.sendMessage(chatId, error);
@@ -99,7 +103,10 @@ const setAReminder = async (bot, chatId) => {
 
 const getAllAlerts = async (bot, chatId) => {
   try {
-    const reminders = await AlertsModel.find({ chatId: chatId });
+    const reminders = await AlertsModel.find({ chatId: chatId }).sort({
+      alertDate: 1,
+      alertTime: 1,
+    });
 
     if (reminders.length === 0) {
       bot.sendMessage(chatId, "You have no alerts.");
@@ -122,7 +129,10 @@ const getAllAlerts = async (bot, chatId) => {
 
 const deleteReminder = async (bot, chatId) => {
   try {
-    const reminders = await AlertsModel.find({ chatId: chatId });
+    const reminders = await AlertsModel.find({ chatId: chatId }).sort({
+      alertDate: 1,
+      alertTime: 1,
+    });
 
     if (reminders.length === 0) {
       bot.sendMessage(chatId, "You have no alerts to delete.");
@@ -162,9 +172,25 @@ const deleteReminder = async (bot, chatId) => {
   }
 };
 
+const deleteExpiredAlerts = async () => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to start of the day
+
+    // Find and delete alerts with a date before today
+    const result = await Alert.deleteMany({
+      alertDate: { $lt: today.toISOString().split("T")[0] },
+    });
+    console.log(`Deleted ${result.deletedCount} expired alerts.`);
+  } catch (error) {
+    console.error("Error deleting expired alerts:", error);
+  }
+};
+
 module.exports = {
   setAReminder,
   myMenu,
   getAllAlerts,
   deleteReminder,
+  deleteExpiredAlerts,
 };

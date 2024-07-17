@@ -2,11 +2,13 @@ require("dotenv").config();
 const TelegramBot = require("node-telegram-bot-api");
 const db = require("./db");
 const express = require("express");
+const schedule = require("node-schedule");
 const {
   setAReminder,
   myMenu,
   getAllAlerts,
   deleteReminder,
+  deleteExpiredAlerts,
 } = require("./utils");
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -37,6 +39,10 @@ bot.on("message", async (msg) => {
   } catch (error) {
     bot.sendMessage(chatId, "Error 404.");
   }
+});
+
+const dailyJob = schedule.scheduleJob("0 23 * * *", async () => {
+  await deleteExpiredAlerts();
 });
 
 app.listen(PORT, () => {
