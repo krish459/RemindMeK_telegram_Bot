@@ -1,18 +1,22 @@
 const schedule = require("node-schedule");
 const chrono = require("chrono-node");
+const AlertsModel = require("./models/alertsModel");
 
 const myMenu = (bot, chatId) => {
   const menuList = `
 Welcome to RemindMe Bot! Here are the commands you can use:
 
 1. Show Menu:
-   Type "menu" to display this menu again.
+   Type /menu to display this menu again.
 
 2. Set a Reminder:
-   Type "set a reminder" to set a reminder.
+   Type /add to set a reminder.
 
 3. Show My Reminders:
-   Type "show my reminders" to view all your reminders.
+   Type /view to view all your reminders.
+
+4. Delete a Reminder:
+   Type /delete my reminders to view all your reminders.
 
 Feel free to ask me to set, show, or cancel reminders anytime!
   `;
@@ -74,7 +78,16 @@ const setAReminder = async (bot, chatId) => {
       bot.sendMessage(chatId, "Invalid date or time format.");
     } else {
       // scheduleReminder(bot, chatId, reminderText, reminderDate);
-      console.log(reminderText, reminderDate);
+      //   console.log(reminderText, reminderDate);
+      const newAlert = new AlertsModel({
+        chatId: chatId,
+        alertMessage: reminderText,
+        alertDate: reminderDate.toISOString().split("T")[0], // YYYY-MM-DD format
+        alertTime: reminderDate.toTimeString().split(" ")[0], // HH:MM:SS format
+      });
+
+      await newAlert.save();
+
       bot.sendMessage(
         chatId,
         `Reminder set for ${reminderDate.toLocaleString()}: ${reminderText}`
@@ -85,7 +98,74 @@ const setAReminder = async (bot, chatId) => {
   }
 };
 
+const getAllAlerts = async (bot, chatId) => {
+  try {
+    const reminders = await AlertsModel.find({ chatId: chatId });
+
+    if (reminders.length === 0) {
+      bot.sendMessage(chatId, "You have no alerts.");
+      return;
+    }
+
+    let message = "Here are all your alerts:\n\n";
+    reminders.forEach((alert, index) => {
+      message += `${index + 1}. ${alert.alertMessage} - ${alert.alertDate} at ${
+        alert.alertTime
+      }\n`;
+    });
+
+    bot.sendMessage(chatId, message);
+  } catch (error) {
+    bot.sendMessage(chatId, "An error occurred while fetching your alerts.");
+    console.error(error);
+  }
+};
+
+const deleteReminder = async (bot, chatId) => {
+  try {
+    const reminders = await AlertsModel.find({ chatId: chatId });
+
+    if (reminders.length === 0) {
+      bot.sendMessage(chatId, "You have no alerts to delete.");
+      return;
+    }
+
+    let message = "Here are all your alerts:\n\n";
+    reminders.forEach((alert, index) => {
+      message += `${index + 1}. ${alert.alertMessage} - ${alert.alertDate} at ${
+        alert.alertTime
+      }\n`;
+    });
+    message += "\nPlease enter the number of the reminder you want to delete:";
+
+    bot.sendMessage(chatId, message);
+
+    bot.once("message", async (msg) => {
+      const reminderNumber = parseInt(msg.text, 10);
+
+      if (
+        isNaN(reminderNumber) ||
+        reminderNumber < 1 ||
+        reminderNumber > reminders.length
+      ) {
+        bot.sendMessage(chatId, "Invalid number. Please try again.");
+        return;
+      }
+
+      const reminderToDelete = reminders[reminderNumber - 1];
+      await AlertsModel.deleteOne({ _id: reminderToDelete._id });
+
+      bot.sendMessage(chatId, "Reminder deleted successfully.");
+    });
+  } catch (error) {
+    bot.sendMessage(chatId, "An error occurred while deleting the reminder.");
+    console.error(error);
+  }
+};
+
 module.exports = {
   setAReminder,
   myMenu,
+  getAllAlerts,
+  deleteReminder,
 };

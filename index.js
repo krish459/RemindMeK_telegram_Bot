@@ -2,7 +2,12 @@ require("dotenv").config();
 const TelegramBot = require("node-telegram-bot-api");
 const db = require("./db");
 const express = require("express");
-const { setAReminder, myMenu } = require("./utils");
+const {
+  setAReminder,
+  myMenu,
+  getAllAlerts,
+  deleteReminder,
+} = require("./utils");
 const PORT = process.env.PORT || 3000;
 const app = express();
 
@@ -18,17 +23,16 @@ bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
   const userTextInAnyCase = msg.text;
   const userInput = userTextInAnyCase.toLowerCase();
-  //   let flag = 0;
-  console.log(userInput);
+  //   console.log(userInput);
   try {
-    if (userInput == "menu") {
+    if (userInput == "/menu" || userInput == "/start") {
       myMenu(bot, chatId);
-    } else if (userInput == "set a reminder") {
+    } else if (userInput == "/add") {
       await setAReminder(bot, chatId);
-    } else if (userInput == "show my reminders") {
-    } else {
-      bot.sendMessage(chatId, "Invalid Response!");
-      myMenu(bot, chatId);
+    } else if (userInput == "/view") {
+      await getAllAlerts(bot, chatId);
+    } else if (userInput == "/delete") {
+      await deleteReminder(bot, chatId);
     }
   } catch (error) {
     bot.sendMessage(chatId, "Error 404.");
