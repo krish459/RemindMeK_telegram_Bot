@@ -194,7 +194,7 @@ const sendVoiceReminder = async (bot, chatId, reminderText) => {
 
     // await bot.sendVoice(chatId, audioFilePath);
   } catch (error) {
-    console.error("Error sending voice reminder:", error);
+    console.error("Error sending voice reminder :", error);
   }
 };
 
