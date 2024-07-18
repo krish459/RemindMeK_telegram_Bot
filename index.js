@@ -21,6 +21,8 @@ const token = process.env.TELEGRAM_BOT_TOKEN;
 
 const bot = new TelegramBot(token, { polling: true });
 
+bot.setWebHook(`https://remindmek-telegram-bot.onrender.com/${token}`);
+
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
   const userTextInAnyCase = msg.text;
