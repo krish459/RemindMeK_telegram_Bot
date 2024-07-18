@@ -30,9 +30,9 @@ bot.on("message", async (msg) => {
   //   console.log(userInput);
   try {
     if (userInput == "/menu" || userInput == "/start") {
-      myMenu(bot, chatId);
       userName = msg.chat.first_name + " " + msg.chat.last_name;
       addUsers(bot, chatId, userName);
+      myMenu(bot, chatId);
     } else if (userInput == "/add") {
       await setAReminder(bot, chatId);
     } else if (userInput == "/view") {
