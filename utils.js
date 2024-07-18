@@ -81,7 +81,7 @@ const setAReminder = async (bot, chatId) => {
       const newAlert = new AlertsModel({
         chatId: chatId,
         alertMessage: reminderText,
-        alertDateTime: reminderDate,
+        alertDateTime: reminderDate.toISOString(),
       });
 
       await newAlert.save();
