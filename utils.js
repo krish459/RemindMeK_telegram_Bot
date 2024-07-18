@@ -103,8 +103,7 @@ const setAReminder = async (bot, chatId) => {
 const getAllAlerts = async (bot, chatId) => {
   try {
     const reminders = await AlertsModel.find({ chatId: chatId }).sort({
-      alertDate: 1,
-      alertTime: 1,
+      alertDateTime: 1,
     });
 
     if (reminders.length === 0) {
@@ -114,9 +113,9 @@ const getAllAlerts = async (bot, chatId) => {
 
     let message = "Here are all your alerts:\n\n";
     reminders.forEach((alert, index) => {
-      message += `${index + 1}. ${alert.alertMessage} - ${alert.alertDate} at ${
-        alert.alertTime
-      }\n`;
+      message += `${index + 1}. ${alert.alertMessage} - ${
+        alert.alertDateTime.toISOString
+      } at ${alert.alertDateTime.getTime}\n`;
     });
 
     bot.sendMessage(chatId, message);
@@ -129,8 +128,7 @@ const getAllAlerts = async (bot, chatId) => {
 const deleteReminder = async (bot, chatId) => {
   try {
     const reminders = await AlertsModel.find({ chatId: chatId }).sort({
-      alertDate: 1,
-      alertTime: 1,
+      alertDateTime: 1,
     });
 
     if (reminders.length === 0) {
@@ -140,9 +138,9 @@ const deleteReminder = async (bot, chatId) => {
 
     let message = "Here are all your alerts:\n\n";
     reminders.forEach((alert, index) => {
-      message += `${index + 1}. ${alert.alertMessage} - ${alert.alertDate} at ${
-        alert.alertTime
-      }\n`;
+      message += `${index + 1}. ${alert.alertMessage} - ${
+        alert.alertDateTime.toISOString
+      } at ${alert.alertDateTime.getTime}\n`;
     });
     message += "\nPlease enter the number of the reminder you want to delete:";
 
