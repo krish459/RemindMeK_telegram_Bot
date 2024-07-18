@@ -113,9 +113,9 @@ const getAllAlerts = async (bot, chatId) => {
 
     let message = "Here are all your alerts:\n\n";
     reminders.forEach((alert, index) => {
-      message += `${index + 1}. ${alert.alertMessage} - ${
-        alert.alertDateTime.toISOString
-      } at ${alert.alertDateTime.getTime}\n`;
+      message += `${index + 1}. ${alert.alertMessage} - ${new Date(
+        alert.alertDateTime
+      ).toLocaleString()}\n`;
     });
 
     bot.sendMessage(chatId, message);
@@ -138,9 +138,9 @@ const deleteReminder = async (bot, chatId) => {
 
     let message = "Here are all your alerts:\n\n";
     reminders.forEach((alert, index) => {
-      message += `${index + 1}. ${alert.alertMessage} - ${
-        alert.alertDateTime.toISOString
-      } at ${alert.alertDateTime.getTime}\n`;
+      message += `${index + 1}. ${alert.alertMessage} - ${new Date(
+        alert.alertDateTime
+      ).toLocaleString()}\n`;
     });
     message += "\nPlease enter the number of the reminder you want to delete:";
 

@@ -47,11 +47,13 @@ bot.on("message", async (msg) => {
 
 const cleanUpInterval = 24 * 60 * 60 * 1000; // Clean up once a day
 setInterval(() => {
+  console.log("Clean Up running");
   deleteExpiredAlerts();
 }, cleanUpInterval);
 
 const interval = 60000; // Check every minute
 setInterval(() => {
+  console.log("Finding the alerts");
   checkAndSendAlerts(bot);
 }, interval);
 
