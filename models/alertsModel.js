@@ -10,13 +10,13 @@ let alertSchema = new Schema(
     alertMessage: {
       type: String,
     },
-    alertDate: {
-      type: String,
+    alertDateTime: {
+      type: Date,
       required: true,
     },
-    alertTime: {
-      type: String,
-      required: true,
+    sent: {
+      type: Boolean,
+      default: false,
     },
   },
   {

@@ -1,5 +1,5 @@
-const schedule = require("node-schedule");
 const AlertsModel = require("./models/alertsModel");
+const { sendVoiceReminder } = require("./schedule");
 
 const myMenu = (bot, chatId) => {
   const menuList = `
@@ -17,7 +17,7 @@ Welcome to RemindMe Bot! Here are the commands you can use:
 4. Delete a Reminder:
    Type /delete my reminders to view all your reminders.
 
-Feel free to ask me to set, show, or cancel reminders anytime!
+Feel free to ask me to set, show, or cancel reminders anytime!!
   `;
   bot.sendMessage(chatId, menuList);
 };
@@ -81,8 +81,7 @@ const setAReminder = async (bot, chatId) => {
       const newAlert = new AlertsModel({
         chatId: chatId,
         alertMessage: reminderText,
-        alertDate: reminderDate.toISOString().split("T")[0], // YYYY-MM-DD format
-        alertTime: reminderDate.toTimeString().split(" ")[0], // HH:MM:SS format
+        alertDateTime: reminderDate,
       });
 
       await newAlert.save();
@@ -91,10 +90,10 @@ const setAReminder = async (bot, chatId) => {
         chatId,
         `Reminder set for ${reminderDate.toLocaleString()}: ${reminderText}`
       );
-      schedule.scheduleJob(reminderDate, async () => {
-        sendVoiceReminder(bot, chatId, reminderText);
-        await AlertsModel.deleteOne({ _id: newAlert._id });
-      });
+      //   schedule.scheduleJob(reminderDate, async () => {
+      //     sendVoiceReminder(bot, chatId, reminderText);
+      //     await AlertsModel.deleteOne({ _id: newAlert._id });
+      //   });
     }
   } catch (error) {
     bot.sendMessage(chatId, error);
@@ -172,36 +171,9 @@ const deleteReminder = async (bot, chatId) => {
   }
 };
 
-const deleteExpiredAlerts = async () => {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to start of the day
-
-    // Find and delete alerts with a date before today
-    const result = await Alert.deleteMany({
-      alertDate: { $lt: today.toISOString().split("T")[0] },
-    });
-    console.log(`Deleted ${result.deletedCount} expired alerts.`);
-  } catch (error) {
-    console.error("Error deleting expired alerts:", error);
-  }
-};
-
-const sendVoiceReminder = async (bot, chatId, reminderText) => {
-  try {
-    audioFilePath = "assets\\audio\\notificationTune.wav";
-    await bot.sendMessage(chatId, `🔔 **Reminder** 🔔\n\n${reminderText}`);
-
-    // await bot.sendVoice(chatId, audioFilePath);
-  } catch (error) {
-    console.error("Error sending voice reminder :", error);
-  }
-};
-
 module.exports = {
   setAReminder,
   myMenu,
   getAllAlerts,
   deleteReminder,
-  deleteExpiredAlerts,
 };
