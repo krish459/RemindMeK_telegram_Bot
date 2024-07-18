@@ -9,6 +9,7 @@ const {
   deleteReminder,
 } = require("./utils");
 const { deleteExpiredAlerts, checkAndSendAlerts } = require("./schedule");
+const { addUsers } = require("./userSave");
 const PORT = process.env.PORT || 3000;
 const app = express();
 
@@ -30,6 +31,8 @@ bot.on("message", async (msg) => {
   try {
     if (userInput == "/menu" || userInput == "/start") {
       myMenu(bot, chatId);
+      userName = msg.chat.first_name + " " + msg.chat.last_name;
+      addUsers(bot, chatId, userName);
     } else if (userInput == "/add") {
       await setAReminder(bot, chatId);
     } else if (userInput == "/view") {
