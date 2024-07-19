@@ -36,7 +36,7 @@ const setAReminder = async (bot, chatId) => {
       bot.once("message", (msg) => {
         const dateParts = msg.text.split("/");
         const date = new Date(
-          `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
+          Date.UTC(dateParts[2], dateParts[1] - 1, dateParts[0])
         );
         if (isNaN(date.getTime())) {
           reject(
@@ -71,7 +71,7 @@ const setAReminder = async (bot, chatId) => {
       });
     });
 
-    reminderDate.setHours(reminderTime.hours, reminderTime.minutes);
+    reminderDate.setUTCHours(reminderTime.hours, reminderTime.minutes);
 
     if (isNaN(reminderDate.getTime())) {
       bot.sendMessage(chatId, "Invalid date or time format.");
@@ -83,14 +83,11 @@ const setAReminder = async (bot, chatId) => {
       );
       console.log("This is just the date: ", reminderDate);
 
-      const utcDate = new Date(reminderDate.UTC());
-
-      console.log("This is the date while saving in UTC", utcDate);
-      //   console.log(reminderText, reminderDate);
+      console.log("This is the date while saving in UTC", reminderDate);
       const newAlert = new AlertsModel({
         chatId: chatId,
         alertMessage: reminderText,
-        alertDateTime: utcDate,
+        alertDateTime: reminderDate,
       });
 
       await newAlert.save();
