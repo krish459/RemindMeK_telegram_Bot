@@ -82,23 +82,23 @@ const setAReminder = async (bot, chatId) => {
         reminderDate.toISOString()
       );
       console.log("This is just the date: ", reminderDate);
+
+      const utcDate = new Date(reminderDate.UTC());
+
+      console.log("This is the date while saving in UTC", utcDate);
       //   console.log(reminderText, reminderDate);
       const newAlert = new AlertsModel({
         chatId: chatId,
         alertMessage: reminderText,
-        alertDateTime: reminderDate.toISOString(),
+        alertDateTime: utcDate,
       });
 
       await newAlert.save();
 
       bot.sendMessage(
         chatId,
-        `Reminder set for ${reminderDate.toLocaleString()}: ${reminderText}`
+        `Reminder set for ${reminderDate.toLocaleString()}: \n\nReminder Text: ${reminderText}`
       );
-      //   schedule.scheduleJob(reminderDate, async () => {
-      //     sendVoiceReminder(bot, chatId, reminderText);
-      //     await AlertsModel.deleteOne({ _id: newAlert._id });
-      //   });
     }
   } catch (error) {
     bot.sendMessage(chatId, error);
