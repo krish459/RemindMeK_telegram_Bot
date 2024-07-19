@@ -12,8 +12,8 @@ const sendVoiceReminder = async (bot, chatId, reminderText) => {
 };
 
 const checkAndSendAlerts = async (bot) => {
-  const now = new Date();
-  //   console.log("now date: ", now);
+  const now = new Date().toISOString();
+    console.log("now date: ", now);
 
   try {
     // Find alerts that are due and not yet sent
