@@ -12,9 +12,8 @@ const sendVoiceReminder = async (bot, chatId, reminderText) => {
 };
 
 const checkAndSendAlerts = async (bot) => {
-  const now = new Date();
+  const now = new Date().toISOString();
   console.log("now date: ", now);
-  console.log("now date: .toISOString(); ", now.toISOString());
 
   try {
     // Find alerts that are due and not yet sent
@@ -34,7 +33,7 @@ const checkAndSendAlerts = async (bot) => {
 };
 
 const deleteExpiredAlerts = async () => {
-  const now = new Date();
+  const now = new Date().toISOString();
   try {
     // Delete alerts that were sent more than a day ago
     const result = await AlertsModel.deleteMany({
