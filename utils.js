@@ -26,9 +26,7 @@ const setAReminder = async (bot, chatId) => {
   try {
     const reminderText = await new Promise((resolve) => {
       bot.sendMessage(chatId, "Please enter the reminder text:");
-      bot.once("message", (msg) => {
-        resolve(msg.text);
-      });
+      bot.once("message", (msg) => resolve(msg.text));
     });
 
     const reminderDate = await new Promise((resolve, reject) => {
@@ -60,12 +58,8 @@ const setAReminder = async (bot, chatId) => {
           let [_, hours, minutes, period] = timeParts;
           hours = parseInt(hours, 10);
           minutes = parseInt(minutes, 10);
-
-          if (period.toLowerCase() === "pm" && hours < 12) {
-            hours += 12;
-          } else if (period.toLowerCase() === "am" && hours === 12) {
-            hours = 0;
-          }
+          if (period.toLowerCase() === "pm" && hours < 12) hours += 12;
+          if (period.toLowerCase() === "am" && hours === 12) hours = 0;
           resolve({ hours, minutes });
         }
       });
@@ -76,29 +70,21 @@ const setAReminder = async (bot, chatId) => {
     if (isNaN(reminderDate.getTime())) {
       bot.sendMessage(chatId, "Invalid date or time format.");
     } else {
-      // scheduleReminder(bot, chatId, reminderText, reminderDate);
-      console.log(
-        "This is the date while saving in ISO",
-        reminderDate.toISOString()
-      );
-      console.log("This is just the date: ", reminderDate);
-
-      console.log("This is the date while saving in UTC", reminderDate);
+      console.log("Reminder Date in ISO:", reminderDate.toISOString());
       const newAlert = new AlertsModel({
         chatId: chatId,
         alertMessage: reminderText,
-        alertDateTime: reminderDate,
+        alertDateTime: reminderDate.toISOString(),
       });
 
       await newAlert.save();
-
       bot.sendMessage(
         chatId,
-        `Reminder set for ${reminderDate.toLocaleString()}: \n\nReminder Text: ${reminderText}`
+        `Reminder set for ${reminderDate.toLocaleString()}:\n\nReminder Text: ${reminderText}`
       );
     }
   } catch (error) {
-    bot.sendMessage(chatId, error);
+    bot.sendMessage(chatId, error.message);
   }
 };
 
