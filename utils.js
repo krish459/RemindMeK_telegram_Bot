@@ -70,21 +70,21 @@ const setAReminder = async (bot, chatId) => {
       "Yeh normal date hai: toISOString: ",
       reminderDate.toISOString()
     );
-    // console.log(reminderDate.getTimezoneOffset());
-    // const utcReminderDate = new Date(
-    //   reminderDate.getTime() - reminderDate.getTimezoneOffset() * 60000
-    // );
-    // console.log("utc hai bhai yeh: ", utcReminderDate);
+    console.log(reminderDate.getTimezoneOffset());
+    const utcReminderDate = new Date(
+      reminderDate.getTime() - reminderDate.getTimezoneOffset() * 60000
+    );
+    console.log("utc hai bhai yeh: ", utcReminderDate);
 
-    if (isNaN(reminderDate.getTime())) {
+    if (isNaN(utcReminderDate.getTime())) {
       bot.sendMessage(chatId, "Invalid date or time format.");
     } else {
       //   console.log("Reminder Date in ISO:", utcReminderDate.toISOString());
       const newAlert = new AlertsModel({
         chatId: chatId,
         alertMessage: reminderText,
-        // alertDateTime: utcReminderDate.toISOString(),
-        alertDateTime: reminderDate.toISOString(),
+        alertDateTime: utcReminderDate.toISOString(),
+        // alertDateTime: reminderDate.toISOString(),
       });
 
       await newAlert.save();
