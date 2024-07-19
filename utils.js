@@ -77,6 +77,11 @@ const setAReminder = async (bot, chatId) => {
       bot.sendMessage(chatId, "Invalid date or time format.");
     } else {
       // scheduleReminder(bot, chatId, reminderText, reminderDate);
+      console.log(
+        "This is the date while saving in ISO",
+        reminderDate.toISOString()
+      );
+      console.log("This is just the date: ", reminderDate);
       //   console.log(reminderText, reminderDate);
       const newAlert = new AlertsModel({
         chatId: chatId,
