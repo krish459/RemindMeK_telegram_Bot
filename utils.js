@@ -33,9 +33,7 @@ const setAReminder = async (bot, chatId) => {
       bot.sendMessage(chatId, 'Please enter the date in format "dd/mm/yyyy":');
       bot.once("message", (msg) => {
         const dateParts = msg.text.split("/");
-        const date = new Date(
-          Date.UTC(dateParts[2], dateParts[1] - 1, dateParts[0])
-        );
+        const date = new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
         if (isNaN(date.getTime())) {
           reject(
             'Invalid date format. Please enter the date in format "dd/mm/yyyy":'
@@ -65,16 +63,20 @@ const setAReminder = async (bot, chatId) => {
       });
     });
 
-    reminderDate.setUTCHours(reminderTime.hours, reminderTime.minutes);
+    reminderDate.setHours(reminderTime.hours, reminderTime.minutes);
 
-    if (isNaN(reminderDate.getTime())) {
+    const utcReminderDate = new Date(
+      reminderDate.getTime() - reminderDate.getTimezoneOffset() * 60000
+    );
+
+    if (isNaN(utcReminderDate.getTime())) {
       bot.sendMessage(chatId, "Invalid date or time format.");
     } else {
-      console.log("Reminder Date in ISO:", reminderDate.toISOString());
+      console.log("Reminder Date in ISO:", utcReminderDate.toISOString());
       const newAlert = new AlertsModel({
         chatId: chatId,
         alertMessage: reminderText,
-        alertDateTime: reminderDate.toISOString(),
+        alertDateTime: utcReminderDate.toISOString(),
       });
 
       await newAlert.save();
