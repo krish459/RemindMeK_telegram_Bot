@@ -12,10 +12,11 @@ const sendVoiceReminder = async (bot, chatId, reminderText) => {
 };
 
 const checkAndSendAlerts = async (bot) => {
-  const now = new Date().toISOString();
+  const now = new Date();
   const utcNowDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
   console.log("now date: ", now);
   console.log("utc now date: ", utcNowDate);
+  console.log("utc now date: ISO ", utcNowDate.toISOString());
   console.log("offset: ", now.getTimezoneOffset());
 
   try {
