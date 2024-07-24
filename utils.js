@@ -67,10 +67,12 @@ const setAReminder = async (bot, chatId) => {
     });
 
     reminderDate.setHours(reminderTime.hours, reminderTime.minutes);
+    const reminderDateTimeIST = moment.tz(reminderDate, 'YYYY-MM-DD HH:mm', timeZone);
 
     // Convert a given time to UTC
-    const utcTime = moment.tz(reminderDate, timeZone).utc().format();
-    console.log(`Local Time: ${reminderDate}`);
+    // const utcTime = moment.tz(reminderDate, timeZone).utc().format();
+    const utcTime = reminderDateTimeIST.utc().format();
+    console.log(`Local Time: ${reminderDateTimeIST}`);
     console.log(`UTC Time: ${utcTime}`);
     // console.log("Saved date: ", reminderDate.toISOString());
 
