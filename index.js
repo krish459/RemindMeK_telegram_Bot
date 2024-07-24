@@ -17,7 +17,10 @@ app.get("/", (req, res) => {
   res.send("Hello World. The Server is running");
 });
 
-const token = process.env.NODE_ENV === 'production' ? process.env.TELEGRAM_BOT_TOKEN_TESTING : process.env.TELEGRAM_BOT_TOKEN
+const token =
+  process.env.NODE_ENV === "production"
+    ? process.env.TELEGRAM_BOT_TOKEN_TESTING
+    : process.env.TELEGRAM_BOT_TOKEN;
 console.log(`Using token in ${process.env.NODE_ENV}`);
 
 const bot = new TelegramBot(token, { polling: true });

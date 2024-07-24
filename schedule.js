@@ -1,4 +1,6 @@
 const AlertsModel = require("./models/alertsModel");
+const moment = require("moment-timezone");
+const { timeZone } = require("./utils");
 
 const sendVoiceReminder = async (bot, chatId, reminderText) => {
   try {
@@ -12,6 +14,8 @@ const sendVoiceReminder = async (bot, chatId, reminderText) => {
 };
 
 const checkAndSendAlerts = async (bot) => {
+  // Get the current time in the specified time zone
+  // const localTime = moment().tz(timeZone).format();
   const now = new Date();
   const utcNowDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
   console.log("now date: ", now);
