@@ -1,6 +1,5 @@
 const AlertsModel = require("./models/alertsModel");
 
-
 const sendVoiceReminder = async (bot, chatId, reminderText) => {
   try {
     audioFilePath = "assets\\audio\\notificationTune.wav";
@@ -17,10 +16,10 @@ const checkAndSendAlerts = async (bot) => {
   // const localTime = moment().tz(timeZone).format();
   const now = new Date();
   const utcNowDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-  console.log("now date: ", now);
-  console.log("utc now date: ", utcNowDate);
-  console.log("utc now date: ISO ", utcNowDate.toISOString());
-  console.log("offset: ", now.getTimezoneOffset());
+  // console.log("now date: ", now);
+  // console.log("utc now date: ", utcNowDate);
+  // console.log("utc now date: ISO ", utcNowDate.toISOString());
+  // console.log("offset: ", now.getTimezoneOffset());
 
   try {
     // Find alerts that are due and not yet sent
