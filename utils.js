@@ -1,8 +1,5 @@
 const AlertsModel = require("./models/alertsModel");
-const moment = require("moment-timezone");
-
-// Set the time zone
-const timeZone = "Asia/Kolkata"; // Change this to your local time zone
+const { convertISTtoUTCfunction } = require("./timeZoneConv");
 
 const myMenu = (bot, chatId) => {
   const menuList = `
@@ -67,19 +64,11 @@ const setAReminder = async (bot, chatId) => {
     });
 
     reminderDate.setHours(reminderTime.hours, reminderTime.minutes);
-    const reminderDateTimeIST = moment.tz(reminderDate, 'YYYY-MM-DD HH:mm', timeZone);
-
-    // Convert a given time to UTC
-    // const utcTime = moment.tz(reminderDate, timeZone).utc().format();
-    const utcTime = reminderDateTimeIST.utc().format();
-    console.log(`Local Time: ${reminderDateTimeIST}`);
+    const utcTime = convertISTtoUTCfunction(reminderDate);
     console.log(`UTC Time: ${utcTime}`);
-    // console.log("Saved date: ", reminderDate.toISOString());
+    console.log(`UTC Time iso: ${utcTime.toISOString()}`);
 
-    const expectedFormat = "YYYY-MM-DDTHH:mm:ss[Z]"; // ISO format
-    const isValid = moment(utcTime, expectedFormat, true).isValid();
-
-    if (!isValid) {
+    if (!utcTime) {
       bot.sendMessage(chatId, "Invalid date or time format.");
     } else {
       const newAlert = new AlertsModel({
@@ -173,5 +162,4 @@ module.exports = {
   myMenu,
   getAllAlerts,
   deleteReminder,
-  timeZone,
 };
