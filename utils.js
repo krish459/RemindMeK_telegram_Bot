@@ -65,8 +65,8 @@ const setAReminder = async (bot, chatId) => {
 
     reminderDate.setHours(reminderTime.hours, reminderTime.minutes);
     const utcTime = convertISTtoUTCfunction(reminderDate);
-    console.log(`UTC Time: ${utcTime}`);
-    console.log(`UTC Time iso: ${utcTime.toISOString()}`);
+    // console.log(`UTC Time: ${utcTime}`);
+    // console.log(`UTC Time iso: ${utcTime.toISOString()}`);
 
     if (!utcTime) {
       bot.sendMessage(chatId, "Invalid date or time format.");
