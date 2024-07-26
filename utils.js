@@ -88,6 +88,31 @@ const setAReminder = async (bot, chatId) => {
   }
 };
 
+// const getAllAlerts = async (bot, chatId) => {
+//   try {
+//     const reminders = await AlertsModel.find({ chatId: chatId }).sort({
+//       alertDateTime: 1,
+//     });
+
+//     if (reminders.length === 0) {
+//       bot.sendMessage(chatId, "You have no alerts.");
+//       return;
+//     }
+
+//     let message = "Here are all your alerts:\n\n";
+//     reminders.forEach((alert, index) => {
+//       message += `${index + 1}. ${alert.alertMessage} - ${new Date(
+//         alert.alertDateTime
+//       ).toLocaleString()}\n`;
+//     });
+
+//     bot.sendMessage(chatId, message);
+//   } catch (error) {
+//     bot.sendMessage(chatId, "An error occurred while fetching your alerts.");
+//     console.error(error);
+//   }
+// };
+
 const getAllAlerts = async (bot, chatId) => {
   try {
     const reminders = await AlertsModel.find({ chatId: chatId }).sort({
@@ -99,14 +124,34 @@ const getAllAlerts = async (bot, chatId) => {
       return;
     }
 
-    let message = "Here are all your alerts:\n\n";
-    reminders.forEach((alert, index) => {
-      message += `${index + 1}. ${alert.alertMessage} - ${new Date(
-        alert.alertDateTime
-      ).toLocaleString()}\n`;
+    let message = "📅 Here are your upcoming alerts:\n\n";
+    let currentMonth = "";
+    let currentDate = "";
+
+    reminders.forEach((alert) => {
+      const alertDate = new Date(alert.alertDateTime);
+      const alertMonthString = alertDate.toLocaleString("default", {
+        month: "long",
+        year: "numeric",
+      });
+      const alertDateString = alertDate.toLocaleDateString();
+      const alertTimeString = alertDate.toLocaleTimeString();
+
+      if (currentMonth !== alertMonthString) {
+        currentMonth = alertMonthString;
+        message += `\n📅 **${currentMonth}**\n`; // Month header
+        currentDate = ""; // Reset date when new month starts
+      }
+
+      if (currentDate !== alertDateString) {
+        currentDate = alertDateString;
+        message += `\n_${currentDate}_\n`; // Date header within the month
+      }
+
+      message += `=> ${alertTimeString} - **${alert.alertMessage}**\n`;
     });
 
-    bot.sendMessage(chatId, message);
+    bot.sendMessage(chatId, message, { parse_mode: "Markdown" });
   } catch (error) {
     bot.sendMessage(chatId, "An error occurred while fetching your alerts.");
     console.error(error);
