@@ -43,9 +43,7 @@ const deleteExpiredAlerts = async () => {
   try {
     // Delete alerts that were sent more than a day ago
     const result = await AlertsModel.deleteMany({
-      alertDate: { $lte: now },
       sent: true,
-      updatedAt: { $lte: new Date(now - 24 * 60 * 60 * 1000) }, // 24 hours ago
     });
 
     console.log(`Deleted ${result.deletedCount} old alerts.`);
